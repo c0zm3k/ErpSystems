@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - College ERP System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+            min-height: 100vh;
+        }
+        .role-btn.active {
+            background-color: #000;
+            color: white;
+        }
+        .role-btn {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md px-4">
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-blue-500 rounded-full mb-4">
+                    <i class="fas fa-graduation-cap text-white text-4xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">College ERP System</h1>
+                <p class="text-gray-500 text-sm mt-2">Streamlined Education Management</p>
+            </div>
+
+            <!-- Login Section -->
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800 mb-1">Login</h2>
+                <p class="text-gray-500 text-sm mb-6">Select your role and enter credentials</p>
+
+                <!-- Role Selection -->
+                <div class="flex gap-3 mb-6">
+                    <button type="button" class="role-btn flex-1 py-2 px-4 rounded-lg border-2 border-gray-200 text-gray-700 font-medium hover:border-black transition" data-role="student">
+                        <i class="fas fa-user-graduate mr-2"></i>Student
+                    </button>
+                    <button type="button" class="role-btn flex-1 py-2 px-4 rounded-lg border-2 border-gray-200 text-gray-700 font-medium hover:border-black transition" data-role="faculty">
+                        <i class="fas fa-chalkboard-user mr-2"></i>Faculty
+                    </button>
+                    <button type="button" class="role-btn flex-1 py-2 px-4 rounded-lg border-2 border-gray-200 text-gray-700 font-medium hover:border-black transition" data-role="admin">
+                        <i class="fas fa-shield-user mr-2"></i>Admin
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}" class="space-y-4">
+                    <input type="hidden" id="selectedRole" name="role" value="student">
+
+                    <!-- Username -->
+                    <div>
+                        <input type="text" id="username" name="username" required 
+                               class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Enter username">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Enter password">
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="w-full bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-800 transition duration-200">
+                        Login as <span id="roleDisplay">Student</span>
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="flex items-center my-6">
+                    <div class="flex-1 border-t border-gray-300"></div>
+                    <span class="px-3 text-gray-500 text-sm">OR</span>
+                    <div class="flex-1 border-t border-gray-300"></div>
+                </div>
+
+                <!-- Demo Account Button -->
+                <button type="button" onclick="useDemoAccount()" class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-50 transition duration-200">
+                    Use Demo Account
+                </button>
+                <p class="text-center text-gray-500 text-xs mt-3">Demo credentials: student / student123</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const roleButtons = document.querySelectorAll('.role-btn');
+        const selectedRoleInput = document.getElementById('selectedRole');
+        const roleDisplay = document.getElementById('roleDisplay');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Set initial active button
+        document.querySelector('[data-role="student"]').classList.add('active', 'bg-black', 'text-white', 'border-black');
+
+        roleButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active state from all buttons
+                roleButtons.forEach(b => {
+                    b.classList.remove('active', 'bg-black', 'text-white', 'border-black');
+                    b.classList.add('border-gray-200', 'text-gray-700');
+                });
+
+                // Add active state to clicked button
+                btn.classList.add('active', 'bg-black', 'text-white', 'border-black');
+                btn.classList.remove('border-gray-200', 'text-gray-700');
+
+                // Update role
+                const role = btn.dataset.role;
+                selectedRoleInput.value = role;
+                roleDisplay.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            });
+        });
+
+        function useDemoAccount() {
+            const role = document.getElementById('selectedRole').value;
+            usernameInput.value = role;
+            passwordInput.value = role + '123';
+            document.getElementById('loginForm').submit();
+        }
+    </script>
+</body>
+</html>

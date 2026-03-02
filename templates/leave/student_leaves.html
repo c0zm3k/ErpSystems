@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}My Leave Applications - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-600">
+        <h1 class="text-3xl font-bold text-gray-800">My Leave Applications</h1>
+        <p class="text-gray-600 mt-2">Track your leave requests and their status</p>
+    </div>
+
+    <div class="flex justify-end mb-4">
+        <a href="{{ url_for('student.apply_leave') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>New Application
+        </a>
+    </div>
+
+    {% if leaves %}
+    <div class="space-y-4">
+        {% for leave in leaves %}
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 {% if leave.status == 'approved' %}border-green-500{% elif leave.status == 'rejected' %}border-red-500{% else %}border-yellow-500{% endif %}">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">{{ leave.start_date }} to {{ leave.end_date }}</h3>
+                    <p class="text-sm text-gray-600 mt-1">Applied on: {{ leave.applied_at.strftime('%d %b %Y, %H:%M') }}</p>
+                </div>
+                <span class="px-4 py-2 rounded-full text-sm font-semibold
+                    {% if leave.status == 'approved' %}
+                    bg-green-100 text-green-800
+                    {% elif leave.status == 'rejected' %}
+                    bg-red-100 text-red-800
+                    {% else %}
+                    bg-yellow-100 text-yellow-800
+                    {% endif %}">
+                    {{ leave.status.title() }}
+                </span>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-gray-700">
+                    <strong>Reason:</strong> {{ leave.reason }}
+                </p>
+                {% if leave.remarks %}
+                <p class="text-gray-700 mt-2">
+                    <strong>Remarks:</strong> {{ leave.remarks }}
+                </p>
+                {% endif %}
+            </div>
+
+            {% if leave.resolved_at %}
+            <div class="text-xs text-gray-600">
+                Resolved on {{ leave.resolved_at.strftime('%d %b %Y') }} by {{ leave.resolved_by }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <p class="text-blue-800 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            No leave applications yet.
+            <a href="{{ url_for('student.apply_leave') }}" class="text-blue-600 hover:underline">Apply for leave</a>
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

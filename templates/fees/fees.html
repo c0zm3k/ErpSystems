@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Fees - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-600">
+        <h1 class="text-3xl font-bold text-gray-800">Fee Details</h1>
+        <p class="text-gray-600 mt-2">Your fee structure and payment status</p>
+    </div>
+
+    <!-- Fee Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-600">
+            <p class="text-gray-600 text-sm mb-1">Total Fees</p>
+            <p class="text-3xl font-bold text-blue-600">₹{{ "%.0f"|format(total_fees) }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-green-600">
+            <p class="text-gray-600 text-sm mb-1">Fees Paid</p>
+            <p class="text-3xl font-bold text-green-600">₹{{ "%.0f"|format(total_fees - pending_fees) }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-red-600">
+            <p class="text-gray-600 text-sm mb-1">Pending Dues</p>
+            <p class="text-3xl font-bold text-red-600">₹{{ "%.0f"|format(pending_fees) }}</p>
+        </div>
+    </div>
+
+    <!-- Fee Structure Table -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Semester-wise Fees</h2>
+        
+        {% if fees %}
+        <div class="overflow-x-auto border rounded-lg">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold">Semester</th>
+                        <th class="px-4 py-3 text-left font-semibold">Amount</th>
+                        <th class="px-4 py-3 text-left font-semibold">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold">Due Date</th>
+                        <th class="px-4 py-3 text-left font-semibold">Paid Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for fee in fees %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold">Semester {{ fee.semester }}</td>
+                        <td class="px-4 py-3">₹{{ "%.0f"|format(fee.amount) }}</td>
+                        <td class="px-4 py-3">
+                            {% if fee.status == 'paid' %}
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Paid</span>
+                            {% else %}
+                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">{{ fee.due_date.strftime('%d-%m-%Y') if fee.due_date else 'N/A' }}</td>
+                        <td class="px-4 py-3">{{ fee.paid_date.strftime('%d-%m-%Y') if fee.paid_date else 'Not Paid' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+            <p class="text-blue-800">No fee records found.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Notes -->
+    <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+        <h3 class="font-semibold text-yellow-900 mb-2">Important Notes:</h3>
+        <ul class="text-sm text-yellow-800 list-disc list-inside space-y-1">
+            <li>Please ensure all dues are paid on or before the due date.</li>
+            <li>Contact the admin office for payment method and clarifications.</li>
+            <li>Late payment may attract additional penalties.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

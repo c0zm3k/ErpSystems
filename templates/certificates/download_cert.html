@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Download Certificates - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-pink-50 rounded-lg p-6 border-l-4 border-pink-600">
+        <h1 class="text-3xl font-bold text-gray-800">My Certificates</h1>
+        <p class="text-gray-600 mt-2">Download your certificates securely</p>
+    </div>
+
+    {% if certificates %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for cert in certificates %}
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition border-t-4 border-pink-600">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">{{ cert.certificate_type }}</h3>
+                    <p class="text-sm text-gray-600">Issued by Admin</p>
+                </div>
+                <i class="fas fa-award text-pink-500 text-3xl opacity-70"></i>
+            </div>
+
+            {% if cert.description %}
+            <p class="text-gray-700 text-sm mb-3">{{ cert.description }}</p>
+            {% endif %}
+
+            <div class="flex items-center justify-between text-xs text-gray-600 mb-4">
+                <span>
+                    <i class="fas fa-calendar mr-1"></i>{{ cert.issue_date.strftime('%d %b %Y') if cert.issue_date else 'No date' }}
+                </span>
+                <span>
+                    <i class="fas fa-upload mr-1"></i>{{ cert.upload_date.strftime('%d %b %Y') }}
+                </span>
+            </div>
+
+            <a href="#" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition text-center">
+                <i class="fas fa-download mr-2"></i>Download Certificate
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <p class="text-blue-800 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            No certificates available yet. Contact your admin if you believe this is an error.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Timetable - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-purple-50 rounded-lg p-6 border-l-4 border-purple-600">
+        <h1 class="text-3xl font-bold text-gray-800">Manage Timetable</h1>
+        <p class="text-gray-600 mt-2">View and manage class schedules</p>
+    </div>
+
+    {% if timetables %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold">Department</th>
+                        <th class="px-4 py-3 text-left font-semibold">Semester</th>
+                        <th class="px-4 py-3 text-left font-semibold">Day</th>
+                        <th class="px-4 py-3 text-left font-semibold">Time</th>
+                        <th class="px-4 py-3 text-left font-semibold">Subject</th>
+                        <th class="px-4 py-3 text-left font-semibold">Faculty</th>
+                        <th class="px-4 py-3 text-left font-semibold">Room</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for slot in timetables %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold">{{ slot.department }}</td>
+                        <td class="px-4 py-3">Sem {{ slot.semester }}</td>
+                        <td class="px-4 py-3">{{ slot.day_of_week }}</td>
+                        <td class="px-4 py-3">{{ slot.start_time }} - {{ slot.end_time }}</td>
+                        <td class="px-4 py-3">{{ slot.subject }}</td>
+                        <td class="px-4 py-3">{{ slot.faculty_name or 'TBA' }}</td>
+                        <td class="px-4 py-3">{{ slot.room_no or 'TBA' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <p class="text-blue-800 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            No timetable entries found. Add entries to manage schedules.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

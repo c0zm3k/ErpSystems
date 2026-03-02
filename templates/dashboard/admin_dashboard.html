@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-red-600 to-red-800 rounded-lg p-8 text-white">
+        <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p class="text-red-100">System Management and Oversight</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Total Users</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ stats.total_users }}</p>
+                </div>
+                <i class="fas fa-users text-blue-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Students</p>
+                    <p class="text-3xl font-bold text-green-600">{{ stats.total_students }}</p>
+                </div>
+                <i class="fas fa-graduation-cap text-green-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Faculty</p>
+                    <p class="text-3xl font-bold text-purple-600">{{ stats.total_faculty }}</p>
+                </div>
+                <i class="fas fa-chalkboard-user text-purple-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Pending Leaves</p>
+                    <p class="text-3xl font-bold text-yellow-600">{{ stats.pending_leaves }}</p>
+                </div>
+                <i class="fas fa-hourglass-end text-yellow-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Pending Fees</p>
+                    <p class="text-3xl font-bold text-red-600">{{ stats.pending_fees }}</p>
+                </div>
+                <i class="fas fa-money-bill-wave text-red-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Management Sections -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- User Management -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-users mr-2 text-blue-600"></i>User Management
+            </h2>
+            <div class="space-y-3">
+                <a href="{{ url_for('admin.users') }}" class="block p-3 bg-blue-50 hover:bg-blue-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Manage Users</p>
+                    <p class="text-sm text-gray-600">View and manage all users</p>
+                </a>
+                <a href="{{ url_for('admin.students') }}" class="block p-3 bg-green-50 hover:bg-green-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Manage Students</p>
+                    <p class="text-sm text-gray-600">Student records and details</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Academic Management -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-book mr-2 text-purple-600"></i>Academic Management
+            </h2>
+            <div class="space-y-3">
+                <a href="{{ url_for('admin.manage_timetable') }}" class="block p-3 bg-purple-50 hover:bg-purple-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Manage Timetable</p>
+                    <p class="text-sm text-gray-600">Edit class schedules</p>
+                </a>
+                <a href="{{ url_for('admin.manage_staff') }}" class="block p-3 bg-indigo-50 hover:bg-indigo-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Manage Staff</p>
+                    <p class="text-sm text-gray-600">Staff directory and records</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Approvals -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-check-circle mr-2 text-yellow-600"></i>Approvals
+            </h2>
+            <div class="space-y-3">
+                <a href="{{ url_for('admin.manage_leaves') }}" class="block p-3 bg-yellow-50 hover:bg-yellow-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Leave Applications</p>
+                    <p class="text-sm text-gray-600">{{ stats.pending_leaves }} pending approvals</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-file-alt mr-2 text-red-600"></i>Documents
+            </h2>
+            <div class="space-y-3">
+                <a href="{{ url_for('admin.upload_certificate') }}" class="block p-3 bg-red-50 hover:bg-red-100 rounded transition">
+                    <p class="font-semibold text-gray-800">Upload Certificates</p>
+                    <p class="text-sm text-gray-600">Issue student certificates</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Leaves Table -->
+    {% if pending_leaves %}
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Pending Leave Applications</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-4 py-3">User</th>
+                        <th class="px-4 py-3">Date Range</th>
+                        <th class="px-4 py-3">Reason</th>
+                        <th class="px-4 py-3">Applied</th>
+                        <th class="px-4 py-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for leave in pending_leaves[:10] %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold">{{ leave.user.username }}</td>
+                        <td class="px-4 py-3">{{ leave.start_date }} to {{ leave.end_date }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ leave.reason[:30] }}...</td>
+                        <td class="px-4 py-3 text-xs text-gray-500">{{ leave.applied_at.strftime('%Y-%m-%d') }}</td>
+                        <td class="px-4 py-3">
+                            <a href="{{ url_for('admin.manage_leaves') }}" class="text-blue-600 hover:underline">Review</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

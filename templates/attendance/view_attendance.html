@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}View Attendance - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-600">
+        <h1 class="text-3xl font-bold text-gray-800">Your Attendance Record</h1>
+        <p class="text-gray-600 mt-2">View your attendance history</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        {% if attendance.items %}
+        <div class="overflow-x-auto border rounded-lg">
+            <table class="w-full">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Marked By</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for record in attendance.items %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3">{{ record.date.strftime('%d %b %Y') }}</td>
+                        <td class="px-4 py-3">
+                            {% if record.status == 'present' %}
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Present</span>
+                            {% elif record.status == 'absent' %}
+                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">Absent</span>
+                            {% else %}
+                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">Leave</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">{{ record.marked_by or 'N/A' }}</td>
+                        <td class="px-4 py-3">{{ record.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if attendance.pages > 1 %}
+        <div class="mt-6 flex justify-center gap-2">
+            {% if attendance.has_prev %}
+            <a href="{{ url_for('student.view_attendance', page=attendance.prev_num) }}" 
+               class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">← Previous</a>
+            {% endif %}
+            
+            <span class="px-4 py-2 text-gray-700">Page {{ attendance.page }} of {{ attendance.pages }}</span>
+            
+            {% if attendance.has_next %}
+            <a href="{{ url_for('student.view_attendance', page=attendance.next_num) }}" 
+               class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+            <p class="text-blue-800">No attendance records found.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Directory - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-indigo-50 rounded-lg p-6 border-l-4 border-indigo-600">
+        <h1 class="text-3xl font-bold text-gray-800">Staff Directory</h1>
+        <p class="text-gray-600 mt-2">Contact information for faculty and staff</p>
+    </div>
+
+    {% if staff %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for member in staff %}
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+            <div class="flex items-start gap-4">
+                <div class="bg-indigo-100 rounded-full p-4 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user text-indigo-600 text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-800">{{ member.name }}</h3>
+                    <p class="text-sm text-indigo-600 font-semibold">{{ member.designation }}</p>
+                    <p class="text-sm text-gray-600">{{ member.department }}</p>
+
+                    {% if member.phone %}
+                    <p class="text-sm text-gray-600 mt-2">
+                        <i class="fas fa-phone mr-2 text-blue-600"></i>{{ member.phone }}
+                    </p>
+                    {% endif %}
+
+                    {% if member.email %}
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-envelope mr-2 text-red-600"></i>
+                        <a href="mailto:{{ member.email }}" class="text-blue-600 hover:underline">{{ member.email }}</a>
+                    </p>
+                    {% endif %}
+
+                    {% if member.office %}
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-door-open mr-2 text-green-600"></i>Office: {{ member.office }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <p class="text-blue-800 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            No staff members listed yet.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

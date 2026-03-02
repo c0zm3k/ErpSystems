@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-8 text-white">
+        <h1 class="text-3xl font-bold mb-2">Welcome, {{ current_user.username }}!</h1>
+        <p class="text-blue-100">{{ student.roll_no }} | {{ student.department }} | Semester {{ student.semester }}</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Attendance -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Attendance</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ attendance_percentage }}%</p>
+                </div>
+                <i class="fas fa-calendar-check text-blue-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <!-- Fees -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Dues</p>
+                    <p class="text-3xl font-bold text-red-600">₹{{ "%.0f"|format(pending_fees) }}</p>
+                </div>
+                <i class="fas fa-money-bill-wave text-red-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <!-- Applications -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Leaves Applied</p>
+                    <p class="text-3xl font-bold text-yellow-600">{{ pending_leaves + approved_leaves }}</p>
+                </div>
+                <i class="fas fa-file-alt text-yellow-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+
+        <!-- Certificates -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Certificates</p>
+                    <p class="text-3xl font-bold text-green-600">{{ certificates|length }}</p>
+                </div>
+                <i class="fas fa-certificate text-green-400 text-4xl opacity-50"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{{ url_for('student.view_attendance') }}" class="bg-blue-50 hover:bg-blue-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-calendar-check text-blue-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">View Attendance</p>
+                    <p class="text-sm text-gray-600">Check your attendance records</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('student.fees') }}" class="bg-green-50 hover:bg-green-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-receipt text-green-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">View Fees</p>
+                    <p class="text-sm text-gray-600">Check fee status and dues</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('student.apply_leave') }}" class="bg-yellow-50 hover:bg-yellow-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-paper-plane text-yellow-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">Apply for Leave</p>
+                    <p class="text-sm text-gray-600">Submit leave application</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('student.view_notes') }}" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-book text-purple-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">Study Notes</p>
+                    <p class="text-sm text-gray-600">Access study materials</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('main.timetable') }}" class="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-clock text-indigo-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">Timetable</p>
+                    <p class="text-sm text-gray-600">View class schedule</p>
+                </div>
+            </a>
+
+            <a href="{{ url_for('student.certificates') }}" class="bg-pink-50 hover:bg-pink-100 p-4 rounded-lg flex items-center transition">
+                <i class="fas fa-award text-pink-600 text-2xl mr-4"></i>
+                <div>
+                    <p class="font-semibold text-gray-800">Certificates</p>
+                    <p class="text-sm text-gray-600">Download your certificates</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Notes Preview -->
+    {% if notes %}
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Latest Study Materials</h2>
+        <div class="space-y-3">
+            {% for note in notes[:5] %}
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100">
+                <div>
+                    <p class="font-semibold text-gray-800">{{ note.title }}</p>
+                    <p class="text-sm text-gray-600">{{ note.subject }} - Uploaded by {{ note.faculty.username }}</p>
+                </div>
+                <i class="fas fa-file-pdf text-red-500 text-xl"></i>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('student.view_notes') }}" class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold">
+            View all materials →
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

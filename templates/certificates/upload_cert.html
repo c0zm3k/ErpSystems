@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Certificates - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-pink-50 rounded-lg p-6 border-l-4 border-pink-600">
+        <h1 class="text-3xl font-bold text-gray-800">Upload Certificate</h1>
+        <p class="text-gray-600 mt-2">Issue certificates to students</p>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                <!-- Student -->
+                <div>
+                    <label for="student_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Select Student <span class="text-red-600">*</span>
+                    </label>
+                    <select id="student_id" name="student_id" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Choose a student...</option>
+                        {% for student in students %}
+                        <option value="{{ student.id }}">{{ student.roll_no }} - {{ student.user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Certificate Type -->
+                <div>
+                    <label for="certificate_type" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Certificate Type <span class="text-red-600">*</span>
+                    </label>
+                    <input type="text" id="certificate_type" name="certificate_type" required
+                           placeholder="e.g., Course Completion, Achievement, Participation"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Issue Date -->
+                <div>
+                    <label for="issue_date" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Issue Date (optional)
+                    </label>
+                    <input type="date" id="issue_date" name="issue_date"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Description (optional)
+                    </label>
+                    <textarea id="description" name="description" rows="3"
+                              placeholder="Additional details about the certificate..."
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div>
+                    <label for="file" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Upload Certificate File <span class="text-red-600">*</span>
+                    </label>
+                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-100 transition">
+                        <input type="file" id="file" name="file" required accept=".pdf,.png,.jpg,.jpeg,.gif"
+                               class="hidden" onchange="updateFileName(this)">
+                        <label for="file" class="cursor-pointer">
+                            <i class="fas fa-certificate text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-700 font-semibold">Click to upload or drag and drop</p>
+                            <p class="text-xs text-gray-600 mt-1">PDF, PNG, JPG, GIF (Max 16MB)</p>
+                        </label>
+                    </div>
+                    <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg transition">
+                        <i class="fas fa-upload mr-2"></i>Upload Certificate
+                    </button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-8 rounded-lg transition">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateFileName(input) {
+    const fileName = document.getElementById('fileName');
+    if (input.files && input.files[0]) {
+        fileName.textContent = '📄 Selected file: ' + input.files[0].name;
+    }
+}
+</script>
+{% endblock %}

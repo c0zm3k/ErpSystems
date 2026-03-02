@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}College ERP System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-white text-2xl mr-3"></i>
+                    <a href="/" class="text-white font-bold text-xl">College ERP</a>
+                </div>
+                
+                <!-- Main Nav Links -->
+                {% if current_user.is_authenticated %}
+                <div class="hidden md:flex space-x-8">
+                    {% if current_user.role == 'student' %}
+                    <a href="{{ url_for('main.timetable') }}" class="text-blue-100 hover:text-white">Timetable</a>
+                    <a href="{{ url_for('main.staff_list') }}" class="text-blue-100 hover:text-white">Staff</a>
+                    <a href="{{ url_for('student.view_attendance') }}" class="text-blue-100 hover:text-white">Attendance</a>
+                    {% elif current_user.role == 'faculty' %}
+                    <a href="{{ url_for('main.timetable') }}" class="text-blue-100 hover:text-white">Timetable</a>
+                    <a href="{{ url_for('main.staff_list') }}" class="text-blue-100 hover:text-white">Staff</a>
+                    {% elif current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin.users') }}" class="text-blue-100 hover:text-white">Users</a>
+                    <a href="{{ url_for('admin.students') }}" class="text-blue-100 hover:text-white">Students</a>
+                    {% endif %}
+                    <a href="{{ url_for('main.timetable') }}" class="text-blue-100 hover:text-white">Timetable</a>
+                </div>
+                {% endif %}
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_authenticated %}
+                    <div class="relative group">
+                        <button class="text-white bg-blue-700 px-4 py-2 rounded hover:bg-blue-600 flex items-center">
+                            <i class="fas fa-user mr-2"></i>{{ current_user.username }}
+                        </button>
+                        <div class="absolute right-0 w-48 bg-white rounded shadow-lg hidden group-hover:block z-10">
+                            <div class="px-4 py-2 border-b text-gray-700">
+                                <p class="text-sm">Role: <strong>{{ current_user.role.title() }}</strong></p>
+                            </div>
+                            <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-gray-100">
+                        Login
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <div class="flex p-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% elif category == 'danger' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} mr-3"></i>
+                    <span>{{ message }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 mt-8 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2026 College ERP System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

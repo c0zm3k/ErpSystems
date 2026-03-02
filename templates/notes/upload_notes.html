@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Study Notes - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-purple-50 rounded-lg p-6 border-l-4 border-purple-600">
+        <h1 class="text-3xl font-bold text-gray-800">Upload Study Notes</h1>
+        <p class="text-gray-600 mt-2">Share educational materials with students</p>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Title <span class="text-red-600">*</span>
+                    </label>
+                    <input type="text" id="title" name="title" required
+                           placeholder="e.g., Introduction to Data Structures"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Subject -->
+                <div>
+                    <label for="subject" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Subject <span class="text-red-600">*</span>
+                    </label>
+                    <input type="text" id="subject" name="subject" required
+                           placeholder="e.g., Data Structures"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Semester -->
+                <div>
+                    <label for="semester" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Semester (optional)
+                    </label>
+                    <select id="semester" name="semester" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Description (optional)
+                    </label>
+                    <textarea id="description" name="description" rows="4"
+                              placeholder="Brief description of the notes..."
+                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div>
+                    <label for="file" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Upload File <span class="text-red-600">*</span>
+                    </label>
+                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-100 transition">
+                        <input type="file" id="file" name="file" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                               class="hidden" onchange="updateFileName(this)">
+                        <label for="file" class="cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-700 font-semibold">Click to upload or drag and drop</p>
+                            <p class="text-xs text-gray-600 mt-1">PDF, DOC, DOCX, JPG, PNG, GIF (Max 16MB)</p>
+                        </label>
+                    </div>
+                    <p id="fileName" class="text-sm text-gray-600 mt-2"></p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg transition">
+                        <i class="fas fa-upload mr-2"></i>Upload Notes
+                    </button>
+                    <a href="{{ url_for('faculty.my_notes') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-8 rounded-lg transition">
+                        View My Notes
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateFileName(input) {
+    const fileName = document.getElementById('fileName');
+    if (input.files && input.files[0]) {
+        fileName.textContent = '📄 Selected file: ' + input.files[0].name;
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Students - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="bg-green-50 rounded-lg p-6 border-l-4 border-green-600">
+        <h1 class="text-3xl font-bold text-gray-800">Manage Students</h1>
+        <p class="text-gray-600 mt-2">View and manage student records</p>
+    </div>
+
+    <!-- Filter by Department -->
+    <div class="flex gap-2 flex-wrap">
+        <a href="{{ url_for('admin.students', department='all') }}" 
+           class="{% if dept_filter == 'all' %}bg-blue-600 text-white{% else %}bg-white text-gray-800 border{% endif %} px-4 py-2 rounded-lg hover:bg-blue-100 transition">
+            All Departments
+        </a>
+        {% for dept in departments %}
+        <a href="{{ url_for('admin.students', department=dept) }}" 
+           class="{% if dept_filter == dept %}bg-blue-600 text-white{% else %}bg-white text-gray-800 border{% endif %} px-4 py-2 rounded-lg hover:bg-blue-100 transition">
+            {{ dept }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Students Table -->
+    {% if students.items %}
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100 border-b">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold">Roll No</th>
+                        <th class="px-4 py-3 text-left font-semibold">Name</th>
+                        <th class="px-4 py-3 text-left font-semibold">Department</th>
+                        <th class="px-4 py-3 text-left font-semibold">Semester</th>
+                        <th class="px-4 py-3 text-left font-semibold">Phone</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for student in students.items %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 font-semibold">{{ student.roll_no }}</td>
+                        <td class="px-4 py-3">{{ student.user.username }}</td>
+                        <td class="px-4 py-3">{{ student.department }}</td>
+                        <td class="px-4 py-3">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">
+                                Sem {{ student.semester }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">{{ student.phone or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if students.pages > 1 %}
+    <div class="mt-6 flex justify-center gap-2">
+        {% if students.has_prev %}
+        <a href="{{ url_for('admin.students', page=students.prev_num, department=dept_filter) }}" 
+           class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">← Previous</a>
+        {% endif %}
+        
+        <span class="px-4 py-2 text-gray-700">Page {{ students.page }} of {{ students.pages }}</span>
+        
+        {% if students.has_next %}
+        <a href="{{ url_for('admin.students', page=students.next_num, department=dept_filter) }}" 
+           class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+        <p class="text-blue-800 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            No students found.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
