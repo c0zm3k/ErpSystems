@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}College ERP System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-100">
+    <!-- Faculty/Admin Sidebar Layout -->
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg flex flex-col">
+            <!-- Header Section -->
+            <div class="p-6 border-b">
+                <div class="mb-4">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-graduation-cap text-blue-600 text-2xl mr-2"></i>
+                        <span class="font-bold text-lg text-gray-800">
+                            {% if current_user.role == 'faculty' %}Faculty Portal{% else %}Admin Portal{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <!-- User Info -->
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <p class="text-xs text-gray-600 uppercase tracking-wide">{{ 'Faculty' if current_user.role == 'faculty' else 'Admin' }} User</p>
+                    <p class="font-semibold text-gray-800 text-sm mt-1">{{ current_user.username }}</p>
+                    {% if current_user.role == 'faculty' %}
+                        <p class="text-xs text-gray-500 mt-1">{{ current_user.faculty.department }}</p>
+                    {% else %}
+                        <p class="text-xs text-gray-500 mt-1">Administrator</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="mt-4 flex-1 px-3">
+                <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider px-3 mb-4">Menu</p>
+                
+                {% if current_user.role == 'faculty' %}
+                    <a href="{{ url_for('faculty.dashboard') }}" class="menu-item {% if request.endpoint == 'faculty.dashboard' %}active{% endif %}">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="{{ url_for('faculty.mark_attendance') }}" class="menu-item {% if request.endpoint == 'faculty.mark_attendance' %}active{% endif %}">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+
+                    <a href="{{ url_for('faculty.upload_notes') }}" class="menu-item {% if request.endpoint == 'faculty.upload_notes' %}active{% endif %}">
+                        <i class="fas fa-book"></i>
+                        <span>Notes</span>
+                    </a>
+
+                    <a href="{{ url_for('faculty.my_notes') }}" class="menu-item {% if request.endpoint == 'faculty.my_notes' %}active{% endif %}">
+                        <i class="fas fa-address-book"></i>
+                        <span>Staff Directory</span>
+                    </a>
+
+                    <a href="{{ url_for('main.timetable') }}" class="menu-item {% if request.endpoint == 'main.timetable' %}active{% endif %}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Timetable</span>
+                    </a>
+
+                    <a href="{{ url_for('faculty.apply_leave') }}" class="menu-item {% if request.endpoint == 'faculty.apply_leave' %}active{% endif %}">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Leave</span>
+                    </a>
+
+                {% elif current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="menu-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.manage_staff') }}" class="menu-item {% if request.endpoint == 'admin.manage_staff' %}active{% endif %}">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Staff Management</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.upload_certificate') }}" class="menu-item {% if request.endpoint == 'admin.upload_certificate' %}active{% endif %}">
+                        <i class="fas fa-certificate"></i>
+                        <span>Certificates</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.manage_leaves') }}" class="menu-item {% if request.endpoint == 'admin.manage_leaves' %}active{% endif %}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Leave Approvals</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.manage_timetable') }}" class="menu-item {% if request.endpoint == 'admin.manage_timetable' %}active{% endif %}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Timetable</span>
+                    </a>
+
+                    <a href="{{ url_for('admin.reports') }}" class="menu-item {% if request.endpoint == 'admin.reports' %}active{% endif %}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                {% endif %}
+            </nav>
+
+            <!-- Logout at bottom -->
+            <div class="p-4 border-t">
+                <a href="{{ url_for('auth.logout') }}" class="flex items-center justify-center w-full px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition font-medium text-sm">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow">
+                <div class="flex justify-between items-center px-8 py-4">
+                    <div class="flex-1"></div>
+                    <div class="flex items-center space-x-6">
+                        {% if current_user.role == 'faculty' %}
+                            <span class="text-gray-700 font-semibold">{{ current_user.faculty.department }}</span>
+                        {% else %}
+                            <span class="text-gray-700 font-semibold">Administrator</span>
+                        {% endif %}
+                        <i class="fas fa-user-circle text-gray-400 text-2xl"></i>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Admin</p>
+                            <p class="font-medium text-gray-800">{{ current_user.username }}</p>
+                        </div>
+                        <a href="{{ url_for('auth.logout') }}" class="text-gray-600 hover:text-red-600 transition">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="mx-6 mt-4">
+                        <div class="flex p-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% elif category == 'danger' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-auto p-8">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            color: #4b5563;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            border-radius: 0.5rem;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background-color: #f3f4f6;
+            color: #1e40af;
+        }
+
+        .menu-item.active {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border-left-color: #3b82f6;
+            font-weight: 600;
+        }
+    </style>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

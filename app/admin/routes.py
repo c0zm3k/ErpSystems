@@ -207,9 +207,31 @@ def manage_timetable():
         flash('Unauthorized access.', 'danger')
         return redirect(url_for('auth.login'))
     
+    # Get all timetables organized by department and semester
     timetables = Timetable.query.all()
     
-    return render_template('admin/manage_timetable.html', timetables=timetables)
+    # Organize by department and semester
+    organized = {}
+    for tt in timetables:
+        key = f"{tt.department}-{tt.semester}"
+        if key not in organized:
+            organized[key] = {'department': tt.department, 'semester': tt.semester, 'slots': []}
+        organized[key]['slots'].append(tt)
+    
+    # Sort by day of week
+    days_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    for key in organized:
+        organized[key]['slots'].sort(key=lambda x: days_order.index(x.day_of_week) if x.day_of_week in days_order else 999)
+    
+    faculties = Faculty.query.all()
+    departments = ['CS', 'EC', 'ME', 'CE', 'IT']
+    semesters = [1, 2, 3, 4, 5, 6, 7, 8]
+    
+    return render_template('admin/manage_timetable.html', 
+                         organized_timetables=organized,
+                         faculties=faculties,
+                         departments=departments,
+                         semesters=semesters)
 
 @admin_bp.route('/add-timetable', methods=['GET', 'POST'])
 @login_required
@@ -226,12 +248,19 @@ def add_timetable():
         start_time = request.form.get('start_time', '').strip()
         end_time = request.form.get('end_time', '').strip()
         subject = request.form.get('subject', '').strip()
-        faculty_name = request.form.get('faculty_name', '').strip()
+        faculty_id = request.form.get('faculty_id', type=int)
         room_no = request.form.get('room_no', '').strip()
         
         if not all([department, semester, day_of_week, start_time, end_time, subject]):
-            flash('All fields are required.', 'danger')
+            flash('All required fields must be filled.', 'danger')
             return redirect(url_for('admin.add_timetable'))
+        
+        # Get faculty name if faculty_id is provided
+        faculty_name = ''
+        if faculty_id:
+            faculty = Faculty.query.get(faculty_id)
+            if faculty:
+                faculty_name = faculty.user.username
         
         timetable = Timetable(
             department=department,
@@ -250,6 +279,10 @@ def add_timetable():
         flash('Timetable entry added successfully.', 'success')
         return redirect(url_for('admin.manage_timetable'))
     
+    # Get query parameters for pre-selection
+    pre_dept = request.args.get('dept', '')
+    pre_sem = request.args.get('sem', type=int)
+    
     faculties = Faculty.query.all()
     departments = ['CS', 'EC', 'ME', 'CE', 'IT']
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -259,9 +292,60 @@ def add_timetable():
                          faculties=faculties,
                          departments=departments,
                          days=days,
-                         semesters=semesters)
+                         semesters=semesters,
+                         pre_dept=pre_dept,
+                         pre_sem=pre_sem)
 
-@admin_bp.route('/manage-timetable')
+@admin_bp.route('/reports')
+@login_required
+def reports():
+    """System reports"""
+    if current_user.role != 'admin':
+        flash('Unauthorized access.', 'danger')
+        return redirect(url_for('auth.login'))
+    
+    # Get report statistics
+    total_students = Student.query.count()
+    
+    # Calculate attendance statistics
+    students = Student.query.all()
+    attendance_percentages = []
+    below_75_count = 0
+    perfect_attendance_count = 0
+    
+    for student in students:
+        attendance_records = Attendance.query.filter_by(student_id=student.id).all()
+        if attendance_records:
+            present_count = sum(1 for a in attendance_records if a.status == 'present')
+            total_count = len(attendance_records)
+            percentage = (present_count / total_count) * 100 if total_count > 0 else 0
+            attendance_percentages.append(percentage)
+            
+            if percentage < 75:
+                below_75_count += 1
+            elif percentage == 100:
+                perfect_attendance_count += 1
+    
+    # Calculate average attendance
+    total_attendance_percentage = sum(attendance_percentages) / len(attendance_percentages) if attendance_percentages else 0
+    
+    # Fees stats
+    total_fees = Fee.query.all()
+    pending_fees_count = Fee.query.filter_by(status='pending').count()
+    collected_fees = sum(f.amount_paid for f in total_fees if f.amount_paid)
+    
+    report_data = {
+        'average_attendance': round(total_attendance_percentage, 1),
+        'below_75_students': below_75_count,
+        'perfect_attendance': perfect_attendance_count,
+        'total_students': total_students,
+        'pending_fees': pending_fees_count,
+        'collected_fees': collected_fees
+    }
+    
+    return render_template('admin/reports.html', report_data=report_data)
+
+@admin_bp.route('/manage-staff')
 @login_required
 def manage_staff():
     """Manage staff"""

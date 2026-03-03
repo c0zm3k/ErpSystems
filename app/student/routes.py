@@ -44,6 +44,12 @@ def dashboard():
     # Available notes
     notes = Note.query.all()
     
+    # New notes count (uploaded in last 7 days)
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    new_notes_count = Note.query.filter(
+        Note.upload_date >= seven_days_ago
+    ).count()
+    
     return render_template('dashboard/student_dashboard.html',
                          student=student,
                          attendance_percentage=round(attendance_percentage, 2),
@@ -53,7 +59,8 @@ def dashboard():
                          pending_leaves=pending_leaves,
                          approved_leaves=approved_leaves,
                          certificates=certificates,
-                         notes=notes)
+                         notes=notes,
+                         new_notes_count=new_notes_count)
 
 @student_bp.route('/attendance')
 @login_required
@@ -83,15 +90,15 @@ def fees():
     student = current_user.student
     fee_records = Fee.query.filter_by(student_id=student.id).all()
     
-    total_amount = sum(f.amount for f in fee_records)
-    paid_amount = sum(f.amount for f in fee_records if f.status == 'paid')
-    pending_amount = total_amount - paid_amount
+    total_fees = sum(f.amount for f in fee_records)
+    paid_fees = sum(f.amount for f in fee_records if f.status == 'paid')
+    pending_fees = total_fees - paid_fees
     
     return render_template('fees/fees.html',
                          fees=fee_records,
-                         total_amount=total_amount,
-                         paid_amount=paid_amount,
-                         pending_amount=pending_amount)
+                         total_fees=total_fees,
+                         paid_fees=paid_fees,
+                         pending_fees=pending_fees)
 
 @student_bp.route('/apply-leave', methods=['GET', 'POST'])
 @login_required

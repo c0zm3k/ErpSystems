@@ -22,11 +22,7 @@
                 <!-- Main Nav Links -->
                 {% if current_user.is_authenticated %}
                 <div class="hidden md:flex space-x-8">
-                    {% if current_user.role == 'student' %}
-                    <a href="{{ url_for('main.timetable') }}" class="text-blue-100 hover:text-white">Timetable</a>
-                    <a href="{{ url_for('main.staff_list') }}" class="text-blue-100 hover:text-white">Staff</a>
-                    <a href="{{ url_for('student.view_attendance') }}" class="text-blue-100 hover:text-white">Attendance</a>
-                    {% elif current_user.role == 'faculty' %}
+                    {% if current_user.role == 'faculty' %}
                     <a href="{{ url_for('main.timetable') }}" class="text-blue-100 hover:text-white">Timetable</a>
                     <a href="{{ url_for('main.staff_list') }}" class="text-blue-100 hover:text-white">Staff</a>
                     {% elif current_user.role == 'admin' %}

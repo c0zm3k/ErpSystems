@@ -1,0 +1,237 @@
+{% extends "base_portal.html" %}
+
+{% block title %}System Reports - College ERP{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="border-l-4 border-purple-500 pl-6">
+        <h1 class="text-3xl font-bold text-gray-900">System Reports</h1>
+        <p class="text-gray-600 mt-1">View and generate various reports</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white rounded-lg shadow border-b">
+        <div class="flex flex-wrap">
+            <button class="tab-btn active px-6 py-3 border-b-2 border-blue-600 text-blue-600 font-semibold transition" data-tab="attendance">
+                <i class="fas fa-calendar-check mr-2"></i>Attendance
+            </button>
+            <button class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-600 font-semibold hover:text-gray-900 transition" data-tab="fees">
+                <i class="fas fa-money-bill-wave mr-2"></i>Fees
+            </button>
+            <button class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-600 font-semibold hover:text-gray-900 transition" data-tab="performance">
+                <i class="fas fa-chart-line mr-2"></i>Performance
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="attendance" class="tab-content space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Average Attendance -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-green-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Average Attendance</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2">{{ report_data.average_attendance }}%</p>
+                    </div>
+                    <i class="fas fa-chart-pie text-green-400 text-3xl opacity-40"></i>
+                </div>
+                <div class="flex items-center text-xs text-green-600 font-medium">
+                    <i class="fas fa-arrow-up mr-1"></i>Semester average
+                </div>
+            </div>
+
+            <!-- Below 75% Attendance -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-red-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Below 75%</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2">{{ report_data.below_75_students }}</p>
+                    </div>
+                    <i class="fas fa-exclamation-circle text-red-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-gray-500">Students</p>
+            </div>
+
+            <!-- Perfect Attendance -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-blue-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Perfect Attendance</p>
+                        <p class="text-4xl font-bold text-gray-900 mt-2">{{ report_data.perfect_attendance }}</p>
+                    </div>
+                    <i class="fas fa-star text-blue-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-gray-500">Students</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-download mr-2 text-blue-600"></i>
+                Download Report
+            </h3>
+            <button class="px-6 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Download Full Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Fees Tab -->
+    <div id="fees" class="tab-content space-y-6 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Collected -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-green-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Grand Total Collected</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">₹{{ report_data.collected_fees }}</p>
+                    </div>
+                    <i class="fas fa-coins text-green-400 text-3xl opacity-40"></i>
+                </div>
+                <div class="flex items-center text-xs text-green-600 font-medium">
+                    <i class="fas fa-arrow-up mr-1"></i>Payment collected
+                </div>
+            </div>
+
+            <!-- Pending Fees -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-orange-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Pending Fees</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ report_data.pending_fees }}</p>
+                    </div>
+                    <i class="fas fa-hourglass-end text-orange-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-orange-600 font-medium">Awaiting payment</p>
+            </div>
+
+            <!-- Total Students -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-blue-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Total Students</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ report_data.total_students }}</p>
+                    </div>
+                    <i class="fas fa-graduation-cap text-blue-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-gray-500">Enrolled</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-download mr-2 text-blue-600"></i>
+                Download Report
+            </h3>
+            <button class="px-6 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Download Full Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Performance Tab -->
+    <div id="performance" class="tab-content space-y-6 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Faculty Performance -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-purple-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Faculty Performance</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">8.7<span class="text-xl">/10</span></p>
+                    </div>
+                    <i class="fas fa-star text-purple-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-gray-500">Average rating</p>
+            </div>
+
+            <!-- Academic Success Rate -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-blue-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Student Pass Rate</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">92%</p>
+                    </div>
+                    <i class="fas fa-trophy text-blue-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-gray-500">Current semester</p>
+            </div>
+
+            <!-- System Uptime -->
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-green-500">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">System Uptime</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">99.8%</p>
+                    </div>
+                    <i class="fas fa-server text-green-400 text-3xl opacity-40"></i>
+                </div>
+                <p class="text-xs text-green-600 font-medium">Excellent</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-download mr-2 text-blue-600"></i>
+                Download Report
+            </h3>
+            <button class="px-6 py-2 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Download Full Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tab-btn {
+        cursor: pointer;
+    }
+
+    .tab-btn.active {
+        border-bottom-color: #2563eb !important;
+        color: #2563eb !important;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+</style>
+
+<script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabName = this.dataset.tab;
+            
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.borderBottomColor = 'transparent';
+                b.style.color = '#4b5563';
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.remove('hidden');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            this.style.borderBottomColor = '#2563eb';
+            this.style.color = '#2563eb';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}College ERP System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-100">
+    <!-- Student Sidebar Layout -->
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg">
+            <!-- Logo -->
+            <div class="p-6 border-b">
+                <div class="flex items-center">
+                    <i class="fas fa-graduation-cap text-blue-600 text-2xl mr-2"></i>
+                    <span class="font-bold text-xl text-gray-800">College ERP</span>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <nav class="mt-6">
+                {% set student = current_user.student %}
+                
+                <a href="{{ url_for('student.dashboard') }}" class="menu-item {% if request.endpoint == 'student.dashboard' %}active{% endif %}">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="{{ url_for('student.view_attendance') }}" class="menu-item {% if request.endpoint == 'student.view_attendance' %}active{% endif %}">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+
+                <a href="{{ url_for('main.timetable') }}" class="menu-item {% if request.endpoint == 'main.timetable' %}active{% endif %}">
+                    <i class="fas fa-clock"></i>
+                    <span>Timetable</span>
+                </a>
+
+                <a href="{{ url_for('student.fees') }}" class="menu-item {% if request.endpoint == 'student.fees' %}active{% endif %}">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Fees</span>
+                </a>
+
+                <a href="{{ url_for('student.view_notes') }}" class="menu-item {% if request.endpoint == 'student.view_notes' %}active{% endif %}">
+                    <i class="fas fa-book"></i>
+                    <span>Notes</span>
+                </a>
+
+                <a href="{{ url_for('student.certificates') }}" class="menu-item {% if request.endpoint == 'student.certificates' %}active{% endif %}">
+                    <i class="fas fa-certificate"></i>
+                    <span>Certificates</span>
+                </a>
+
+                <a href="{{ url_for('student.my_leaves') }}" class="menu-item {% if request.endpoint == 'student.my_leaves' %}active{% endif %}">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Leave</span>
+                </a>
+            </nav>
+
+            <!-- User Info at bottom -->
+            <div class="absolute bottom-0 w-64 p-6 border-t bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ current_user.username }}</p>
+                        <p class="text-sm text-gray-600">{{ student.roll_no }}</p>
+                    </div>
+                    <a href="{{ url_for('auth.logout') }}" class="text-red-600 hover:text-red-800">
+                        <i class="fas fa-sign-out-alt text-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="bg-white shadow">
+                <div class="flex justify-between items-center px-8 py-4">
+                    <div class="flex-1"></div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700 font-semibold">{{ student.department }}</span>
+                        <span class="text-gray-500">Semester {{ student.semester }}</span>
+                        <i class="fas fa-user-circle text-gray-400 text-2xl"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="mx-6 mt-4">
+                        <div class="flex p-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% elif category == 'danger' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% else %}info-circle{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-auto p-8">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #4b5563;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background-color: #f3f4f6;
+            color: #1e40af;
+        }
+
+        .menu-item.active {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-left-color: #1e40af;
+            font-weight: 600;
+        }
+    </style>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
